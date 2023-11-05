@@ -63,7 +63,7 @@ local DungeonPanel = CreateFrame("Frame", "PremadeGroupsFilterDungeonPanel", PGF
 function DungeonPanel:OnLoad()
     PGF.Logger:Debug("DungeonPanel:OnLoad")
     self.name = "dungeon"
-    self.dialogWidth = 420
+    self.dialogWidth = 360
     self.groupWidth = 245
 
     -- Group
@@ -102,9 +102,10 @@ function DungeonPanel:OnLoad()
 
     for i, cmID in ipairs(self.cmIDs) do
         local dungeonName = C_ChallengeMode.GetMapUIInfo(cmID) or "?"
-        self.Dungeons["Dungeon"..i]:SetWidth(145)
-        self.Dungeons["Dungeon"..i].Title:SetText(dungeonName)
-        self.Dungeons["Dungeon"..i].Title:SetWidth(105)
+        local keyword = CMID_MAP[cmID].keyword
+        self.Dungeons["Dungeon"..i]:SetWidth(85)
+        self.Dungeons["Dungeon"..i].Title:SetText(keyword:upper())
+        self.Dungeons["Dungeon"..i].Title:SetWidth(45)
         self.Dungeons["Dungeon"..i].Act:SetScript("OnClick", function(element)
             self.state["dungeon" .. i] = element:GetChecked()
             self:ToogleDungeonAlert()

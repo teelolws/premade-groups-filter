@@ -74,7 +74,7 @@
                 </Frames>
             </Frame>
             <Frame parentKey="Dungeons">
-                <Size x="160" y="250"/>
+                <Size x="100" y="250"/>
                 <Anchors>
                     <Anchor point="TOPRIGHT"/>
                 </Anchors>
