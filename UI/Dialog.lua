@@ -1,3 +1,23 @@
+-------------------------------------------------------------------------------
+-- Premade Groups Filter
+-------------------------------------------------------------------------------
+-- Copyright (C) 2022 Elotheon-Arthas-EU
+--
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License along
+-- with this program; if not, write to the Free Software Foundation, Inc.,
+-- 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-------------------------------------------------------------------------------
+
 local PGF = select(2, ...)
 local L = PGF.L
 local C = PGF.C
@@ -64,7 +84,18 @@ end
 function PGFDialog:OnMouseUp(button)
     if not PremadeGroupsFilterSettings.dialogMovable then return end
     self:StopMovingOrSizing()
+    
+    PremadeGroupsFilterSettings.dialogx = nil
+    PremadeGroupsFilterSettings.dialogy = nil
+    
     self:ResetPosition(button ~= "RightButton")
+    
+    local scale = self:GetScale()
+    self:SetScale(1)
+    local x, y = self:GetRect()
+    PremadeGroupsFilterSettings.dialogx = x
+    PremadeGroupsFilterSettings.dialogy = y
+    self:SetScale(scale)
 end
 
 function PGFDialog:OnMaximize()
@@ -213,10 +244,18 @@ function PGFDialog:ResetPosition(keepParentOffset)
     local x, y = 0, 0
     if keepParentOffset then
         local xp, yp, wp, hp = self:GetParent():GetRect()
-        local xs, ys, ws, hs = self:GetRect()
         local scale = self:GetScale()
-        x = xs - (xp/scale) - (wp/scale)
-        y = ys - (yp/scale) - (hp/scale) + hp
+        if PremadeGroupsFilterSettings.dialogx and PremadeGroupsFilterSettings.dialogy then
+            x = (PremadeGroupsFilterSettings.dialogx/scale) - (xp/scale) - (wp/scale)
+            y = (PremadeGroupsFilterSettings.dialogy/scale) - (yp/scale) - (hp/scale) + hp
+        else
+            local xs, ys = self:GetRect()
+            x = xs - (xp/scale) - (wp/scale)
+            y = ys - (yp/scale) - (hp/scale) + hp
+        end
+    else
+        PremadeGroupsFilterSettings.dialogx = nil
+        PremadeGroupsFilterSettings.dialogy = nil
     end
     if not PGF.SupportsDragonflightUI() then
         x = x - 5
