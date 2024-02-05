@@ -62,9 +62,7 @@ end
 
 function PGFDialog:OnShow()
     PGF.Logger:Debug("PGFDialog:OnShow")
-    if not PremadeGroupsFilterSettings.dialogMovable then
-        self:ResetPosition()
-    end
+    self:ResetPosition(PremadeGroupsFilterSettings.dialogMovable)
     if self.activePanel and self.activePanel.OnShow then
         self.activePanel:OnShow()
     end
@@ -85,9 +83,7 @@ end
 function PGFDialog:OnMouseUp(button)
     if not PremadeGroupsFilterSettings.dialogMovable then return end
     self:StopMovingOrSizing()
-    if button == "RightButton" then
-        self:ResetPosition()
-    end
+    self:ResetPosition(button ~= "RightButton")
 end
 
 function PGFDialog:OnMaximize()
@@ -229,14 +225,22 @@ function PGFDialog:GetSortingExpression()
     return self.activePanel:GetSortingExpression()
 end
 
-function PGFDialog:ResetPosition()
+--- Re-anchors the dialog's TOPLEFT to its parent's TOPRIGHT
+--- @param keepParentOffset boolean determines if the dialog keeps its current positon or if it is moved right next to the parent
+function PGFDialog:ResetPosition(keepParentOffset)
     PGF.Logger:Debug("PGFDialog:ResetPosition")
-    self:ClearAllPoints()
-    if PGF.SupportsDragonflightUI() then
-        self:SetPoint("TOPLEFT", PVEFrame, "TOPRIGHT")
-    else
-        self:SetPoint("TOPLEFT", PVEFrame, "TOPRIGHT", -5, 0)
+    local x, y = 0, 0
+    if keepParentOffset then
+        local xp, yp, wp, hp = self:GetParent():GetRect()
+        local xs, ys, ws, hs = self:GetRect()
+        x = xs - xp - wp
+        y = ys - yp
     end
+    if not PGF.SupportsDragonflightUI() then
+        x = x - 5
+    end
+    self:ClearAllPoints()
+    self:SetPoint("TOPLEFT", PVEFrame, "TOPRIGHT", x, y)
 end
 
 function PGFDialog:RegisterPanel(id, panel)
